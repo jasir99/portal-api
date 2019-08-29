@@ -1,0 +1,4 @@
+Pyrebase==3.0.27
+Flask-Cors==3.0.8
+flask==0.12.2
+gunicorn==19.9.0
