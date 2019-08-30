@@ -23,7 +23,7 @@ def news_all():
     if api_key != API_KEY:
         return jsonify({"message": "Bad API Key!"})
 
-    news = readNews("portal", limit)
+    news = sorted(readNews("portal", limit), key=lambda k: k['published_at'], reverse=True)
     return jsonify(total=len(news), news=news)
 
 
@@ -36,5 +36,5 @@ def news_category(category):
     if api_key != API_KEY:
         return jsonify({"message": "Bad API Key!"})
 
-    news = readNews("portal", limit, category)
+    news = sorted(readNews("portal", limit, category), key=lambda k: k['published_at'], reverse=True)
     return jsonify(total=len(news), news=news)
