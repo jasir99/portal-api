@@ -18,8 +18,6 @@ def readNews(news, limit=32, category=""):
     i = 0
     if db.child(news).get().each() is not None:
         for n in db.child(news).get().each():
-            if i == limit:
-                break
             if category != "":
                 if n.val()["category"].lower() == category:
                     newsList.append(n.val())
@@ -27,5 +25,9 @@ def readNews(news, limit=32, category=""):
             else:
                 newsList.append(n.val())
                 i+=1
+
+        newsList = sorted(newsList, key=lambda k: k['published_at'], reverse=True)
+        if limit < len(newsList):
+            return newsList[:limit]
         return newsList
     return {"message": "No news found!"}

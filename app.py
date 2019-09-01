@@ -23,6 +23,7 @@ def news_all():
     if api_key != API_KEY:
         return jsonify({"message": "Bad API Key!"})
 
+
     news = sorted(readNews("portal", limit), key=lambda k: k['published_at'], reverse=True)
     return jsonify(total=len(news), news=news)
 
