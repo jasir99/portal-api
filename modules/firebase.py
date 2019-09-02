@@ -21,22 +21,19 @@ def readNews(col, limit=32, category="", startAt=0):
     newsList = []
     news = db.child(col).order_by_child("published_at").limit_to_last(limit).get().each()
     if news is not None:
-        if category == "":
-            newsList = [n.val() for n in news]
-            newsList.reverse()
-            return newsList
-
-        i = 0
-        _limit = limit
-        for n in news:
-            if i == limit:
-                newsList.reverse()
-                return newsList
-            if n.val()["category"].lower() == category:
-                i += 1
-                newsList.append(n.val())
-            if n == news[-1] and i < limit:
-                _limit += 10
-                news += db.child(col).order_by_child("published_at").limit_to_last(_limit).get().each()[:10]
-
+        newsList = [n.val() for n in news]
+        newsList.reverse()
+        return newsList
     return {"message": "No news found!"}
+
+
+def readNewsByCategory(col, limit, category, _limit=0, newsList=[]):
+    _limit = _limit + 10
+    news = db.child(col).order_by_child("published_at").limit_to_last(_limit).get().each()[:_limit]
+    news.reverse()
+    for n in news:
+        if n.val()["category"] == category and n.val() not in newsList:
+            newsList.append(n.val())
+        if len(newsList) == limit:
+            return newsList
+    return readNewsByCategory(col, limit, category, _limit, newsList)
