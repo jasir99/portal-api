@@ -17,7 +17,7 @@ def noquote(s):
     return s
 pyrebase.pyrebase.quote = noquote
 
-def readNews(col, limit=32, category=""):
+def readNews(col, limit=32, category="", startAt=0):
     newsList = []
     news = db.child(col).order_by_child("published_at").limit_to_last(limit).get().each()
     if news is not None:
@@ -28,15 +28,15 @@ def readNews(col, limit=32, category=""):
 
         i = 0
         _limit = limit
-        c = 0
-        while i<limit:
-            if c == _limit:
-                _limit += 10
-                news = db.child(col).order_by_child("published_at").limit_to_last(_limit).get().each()
-            if news[c].val()["category"].lower() == category:
+        for n in news:
+            if i == limit:
+                newsList.reverse()
+                return newsList
+            if n.val()["category"].lower() == category:
                 i += 1
-                newsList.append(news[c].val())
-            c+=1
-        newsList.reverse()
-        return newsList
+                newsList.append(n.val())
+            if n == news[-1] and i < limit:
+                _limit += 10
+                news += db.child(col).order_by_child("published_at").limit_to_last(_limit).get().each()[:10]
+
     return {"message": "No news found!"}
