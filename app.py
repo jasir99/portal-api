@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from modules.firebase import readNews, readNewsByCategory
+from modules.firebase import readNews, readNewsByCategoryV2
 from flask_cors import CORS
 
 
@@ -36,5 +36,5 @@ def news_category(category):
     if api_key != API_KEY:
         return jsonify({"message": "Bad API Key!"})
 
-    news = readNewsByCategory("portal", limit, category)[startAt:]
+    news = readNewsByCategoryV2("portal", limit, category)[startAt:]
     return jsonify(total=len(news), news=news)
