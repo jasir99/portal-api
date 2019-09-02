@@ -45,10 +45,11 @@ def readNewsByCategoryV2(col, limit, category):
     newsList = []
     news = db.child(col).order_by_child("published_at").limit_to_last(limit).get().each()
     news.reverse()
+
     for n in news:
         if i == limit:
             return newsList
-        if n.val()["category"].lower():
+        if n.val()["category"].lower() == category:
             i += 1
             newsList.append(n.val())
         if n == news[-1] and i < limit:
