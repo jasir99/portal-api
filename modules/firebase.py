@@ -30,12 +30,12 @@ def readNews(col, limit=32, category=""):
         _limit = limit
         c = 0
         while i<limit:
-            if news[c].val()["category"].lower() == category:
-                i += 1
-                newsList.append(news[c].val())
             if c == _limit:
                 _limit += 10
                 news = db.child(col).order_by_child("published_at").limit_to_last(_limit).get().each()
+            if news[c].val()["category"].lower() == category:
+                i += 1
+                newsList.append(news[c].val())
             c+=1
         newsList.reverse()
         return newsList
