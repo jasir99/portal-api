@@ -19,7 +19,7 @@ def toInt(tmpVal, default=0):
 def news_all():
     api_key = request.args.get("api_key")
     limit = toInt(request.args.get('offset'), 32)
-    startAt = toIng(request.args.get("startAt"), 0)
+    startAt = toInt(request.args.get("startAt"), 0)
     if api_key != API_KEY:
         return jsonify({"message": "Bad API Key!"})
 
