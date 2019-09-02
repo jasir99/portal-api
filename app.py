@@ -18,8 +18,8 @@ def toInt(tmpVal, default=0):
 @app.route("/", methods=['GET'])
 def news_all():
     api_key = request.args.get("api_key")
-    limit = toInt(request.args.get('offset'), 32)
-    startAt = toInt(request.args.get("startAt"), 0)
+    limit = request.args.get('offset')
+    startAt = request.args.get("startAt")
     if api_key != API_KEY:
         return jsonify({"message": "Bad API Key!"})
 
