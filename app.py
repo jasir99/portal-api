@@ -30,11 +30,11 @@ def news_all():
 @app.route("/<category>")
 def news_category(category):
     api_key = request.args.get("api_key")
-    limit = toInt(request.args.get('limit'), 10)
-    offset = toInt(request.args.get('offset'), 0)
+    limit = int(request.args.get('offset'))
+    startAt = int(request.args.get("startAt"))
 
     if api_key != API_KEY:
         return jsonify({"message": "Bad API Key!"})
 
-    news = sorted(readNews("portal", limit, category), key=lambda k: k['published_at'], reverse=True)
+    news = sorted(readNews("portal", limit, category), key=lambda k: k['published_at'], reverse=True)[startAt:]
     return jsonify(total=len(news), news=news)
