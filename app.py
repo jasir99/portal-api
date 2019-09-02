@@ -18,13 +18,12 @@ def toInt(tmpVal, default=0):
 @app.route("/", methods=['GET'])
 def news_all():
     api_key = request.args.get("api_key")
-    limit = toInt(request.args.get('limit'), 10)
-
+    limit = toInt(request.args.get('offset'), 32)
+    startAt = toIng(request.args.get("startAt"), 0)
     if api_key != API_KEY:
         return jsonify({"message": "Bad API Key!"})
 
-
-    news = sorted(readNews("portal", limit), key=lambda k: k['published_at'], reverse=True)
+    news = readNews("portal", limit)[startAt:]
     return jsonify(total=len(news), news=news)
 
 
