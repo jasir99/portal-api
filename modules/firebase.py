@@ -35,7 +35,7 @@ def readNews(col, limit=32, category=""):
                 i += 1
                 newsList.append(n.val())
             if n == news[-1] and i < limit:
-                news += db.child(col).order_by_child("published_at").limit_to_last(_limit).get().each()
+                news = db.child(col).order_by_child("published_at").limit_to_last(_limit).get().each()
                 _limit += 10
         newsList.reverse()
         return newsList
