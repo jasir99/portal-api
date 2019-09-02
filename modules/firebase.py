@@ -13,21 +13,30 @@ firebase = pyrebase.initialize_app(config)
 
 db = firebase.database()
 
-def readNews(news, limit=32, category=""):
-    newsList = []
-    i = 0
-    if db.child(news).get().each() is not None:
-        for n in db.child(news).get().each():
-            if category != "":
-                if n.val()["category"].lower() == category:
-                    newsList.append(n.val())
-                    i+=1
-            else:
-                newsList.append(n.val())
-                i+=1
+def noquote(s):
+    return s
+pyrebase.pyrebase.quote = noquote
 
-        newsList = sorted(newsList, key=lambda k: k['published_at'], reverse=True)
-        if limit < len(newsList):
-            return newsList[:limit]
+def readNews(col, limit=32, category=""):
+    newsList = []
+    news = db.child(col).order_by_child("published_at").limit_to_last(limit).get().each()
+    if news is not None:
+        if category == "":
+            newsList = [n.val() for n in news]
+            newsList.reverse()
+            return newsList
+
+        i = 0
+        _limit = limit + 10
+        for n in news:
+            if i == limit:
+                break
+            if n.val()["category"].lower() == category:
+                i += 1
+                newsList.append(n.val())
+            if n == news[-1] and i < limit:
+                news += db.child(col).order_by_child("published_at").limit_to_last(_limit).get().each()
+                _limit += 10
+        newsList.reverse()
         return newsList
     return {"message": "No news found!"}
