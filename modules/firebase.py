@@ -27,16 +27,16 @@ def readNews(col, limit=32, category=""):
             return newsList
 
         i = 0
-        _limit = limit + 10
-        for n in news:
-            if i == limit:
-                break
-            if n.val()["category"].lower() == category:
+        _limit = limit
+        c = 0
+        while i<limit:
+            if news[c].val()["category"].lower() == category:
                 i += 1
-                newsList.append(n.val())
-            if n == news[-1] and i < limit:
-                news = db.child(col).order_by_child("published_at").limit_to_last(_limit).get().each()
+                newsList.append(news[c].val())
+            if c == _limit:
                 _limit += 10
+                news = db.child(col).order_by_child("published_at").limit_to_last(_limit).get().each()
+            c+=1
         newsList.reverse()
         return newsList
     return {"message": "No news found!"}
