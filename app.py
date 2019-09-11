@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from modules.firestore import getNews
+from modules.firestore import getNews, getNewsByCategory, getNewsByCountry
 from flask_cors import CORS
 
 
@@ -21,10 +21,8 @@ def news_all():
     offset = toInt(request.args.get("offset"), 0)
     if api_key != API_KEY:
         return jsonify({"message": "Bad API Key!"})
-    startAt = limit*offset
-    news = getNews(limit*(offset+1))[startAt:]
+    news = getNews(limit, limit*offset)
     return jsonify(total=len(news), news=news)
-
 
 @app.route("/<category>")
 def news_category(category):
@@ -33,6 +31,16 @@ def news_category(category):
     offset = toInt(request.args.get("offset"), 0)
     if api_key != API_KEY:
         return jsonify({"message": "Bad API Key!"})
+    news = getNewsByCategory(limit, limit*offset, category)
+    return jsonify(total=len(news), news=news)
+
+@app.route("/aktualitet/<country>")
+def news_country(country):
+    api_key = request.args.get("api_key")
+    limit = toInt(request.args.get('limit'), 10)
+    offset = toInt(request.args.get("offset"), 0)
+    if api_key != API_KEY:
+        return jsonify({"message": "Bad API Key!"})
     startAt = limit*offset
-    news = getNews(limit*(offset+1), category)[startAt:]
+    news = getNewsByCountry(limit, limit*offset, country)
     return jsonify(total=len(news), news=news)
